@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f6f7fb;
+  --foreground: #1c2340;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-noto-sans-jp), "Hiragino Sans", "Yu Gothic", sans-serif;
+
+  /* LOVE PLATFORM ブランドカラー（PC版モックアップ v2: ピンク×ネイビー） */
+  --color-love-navy: #1c2340;
+  --color-love-navy-light: #2e3760;
+  --color-love-pink: #ff6f9c;
+  --color-love-pink-dark: #f2467f;
+  --color-love-pink-soft: #ffe4ee;
+  --color-love-gold: #d4af37;
+  --color-love-gold-soft: #f5e6c8;
+  --color-love-bg: #f6f7fb;
+
+  /* カテゴリ別テーマカラー（人とAIとサービスをつなぐ、一目で区別できるように）
+     - AI秘書ねね   → ピンク（love-pink）
+     - 友達・個人   → ブルー（love-blue）
+     - コミュニティ → パープル（love-purple）
+     - 企業サービス → グリーン（love-green）
+     - LOVE COIN    → ゴールド（love-gold）
+     - システム通知 → グレー（love-gray） */
+  --color-love-blue: #4f9dff;
+  --color-love-blue-dark: #2f6fe0;
+  --color-love-blue-soft: #e3eeff;
+  --color-love-purple: #a276ff;
+  --color-love-purple-dark: #7c4def;
+  --color-love-purple-soft: #efe6ff;
+  --color-love-green: #34c98f;
+  --color-love-green-dark: #1f9d6f;
+  --color-love-green-soft: #dcf7ec;
+  --color-love-gray: #9aa1b5;
+  --color-love-gray-dark: #6b7280;
+  --color-love-gray-soft: #eceef3;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
