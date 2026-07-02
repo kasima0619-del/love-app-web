@@ -1,151 +1,36 @@
-# LOVE APP — Web Prototype
-
-**AISNS (AI + SNS)** — The AI layer above every social platform.
-
-> One App. One World.  
-> Developed by [合同会社LOVE](https://love-ap.net) · KASSI
-
----
-
-## Overview
-
-LOVE APP is a Next.js 15 prototype for the LOVE APP platform — an AI-powered super-app that connects LINE, WhatsApp, WeChat, Instagram, TikTok, and more under one roof, with AI Secretary **Nene** at its core.
-
-This repository is the **web prototype** used for development demos and Kickstarter campaign material.
-
-Official landing page: [love-ap.net](https://love-ap.net)
-
----
-
-## Features (Prototype)
-
-| Feature | Status |
-|---|---|
-| 🦉 AI Secretary Nene (Claude AI) | ✅ Working |
-| 💬 Unified Messenger UI | ✅ UI Demo |
-| 🏠 Dashboard | ✅ UI Demo |
-| 📅 Schedule | ✅ UI Demo |
-| 👥 Community | 🚧 In Progress |
-| 📱 iOS / Android | 🚧 Planned |
-
----
-
-## Tech Stack
-
-- **Framework**: Next.js 15 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4
-- **AI**: Anthropic Claude API (AI Secretary Nene)
-- **Auth**: Mock (prototype phase — any input works)
-- **Deploy**: Vercel
-
----
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js 20+
-- npm
-
-### Install
-
-```bash
-npm install
-```
-
-### Environment Variables
-
-Create `.env.local`:
-
-```env
-# Anthropic Claude API (for AI Secretary Nene)
-ANTHROPIC_API_KEY=your_key_here
-
-# Optional: OpenAI fallback
-OPENAI_API_KEY=your_key_here
-```
-
-### Run Development Server
+First, run the development server:
 
 ```bash
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-### Build
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-```bash
-npm run build
-npm run start
-```
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
----
+## Learn More
 
-## Project Structure
+To learn more about Next.js, take a look at the following resources:
 
-```
-src/
-├── app/
-│   ├── (auth)/
-│   │   └── login/          # Login page (prototype — any credentials work)
-│   ├── api/
-│   │   └── nene/           # AI Secretary Nene API endpoint
-│   ├── dashboard/          # Main dashboard
-│   ├── messages/           # Unified messenger
-│   ├── nene/               # Nene chat interface
-│   └── schedule/           # Schedule management
-├── components/             # Shared UI components
-└── lib/
-    └── server/
-        └── ai.ts           # AI provider abstraction (Claude / OpenAI)
-```
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
----
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## AI Secretary Nene
+## Deploy on Vercel
 
-Nene is powered by Anthropic Claude and supports:
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-- SNS post creation (Instagram, TikTok, X, YouTube, LINE)
-- Multi-language translation (JP / EN / ZH / KO / ES)
-- Schedule creation & management
-- Business consulting
-- Learning support
-- Mental support
-
-API endpoint: `POST /api/nene`
-
-```json
-{
-  "messages": [{ "role": "user", "text": "Instagramの投稿文を作って" }],
-  "userName": "KASSI"
-}
-```
-
----
-
-## Team
-
-| Name | Role |
-|---|---|
-| KASSI | Founder & CEO |
-| Nene | AI Secretary & CMO |
-| KURO | CTO (AI Development Partner) |
-| MIKA | Creative Designer |
-
----
-
-## Links
-
-- Official Site: [love-ap.net](https://love-ap.net)
-- Kickstarter: [love-ap.net/kickstarter](https://love-ap.net/kickstarter)
-- Pitch Deck: [love-ap.net/pitch-deck](https://love-ap.net/pitch-deck)
-- App Preview: [love-ap.net/app-preview](https://love-ap.net/app-preview)
-
----
-
-## License
-
-© 2026 合同会社LOVE. All rights reserved.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
