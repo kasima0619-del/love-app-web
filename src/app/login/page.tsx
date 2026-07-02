@@ -22,12 +22,23 @@ export default function LoginPage() {
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-love-pink text-4xl shadow-lg">
             💗
           </div>
-          <h1 className="text-3xl font-black tracking-wide">LOVE</h1>
+          <h1 className="text-3xl font-black tracking-wide">LOVE APP</h1>
+          <div className="rounded-full border border-love-gold/40 bg-love-gold/10 px-3 py-1 text-xs font-bold tracking-widest text-love-gold uppercase">
+            AI + SNS = AISNS
+          </div>
           <p className="text-sm text-white/70">
-            つながる、創る、叶える。
+            LINE・WhatsApp・Instagram・TikTok…
             <br />
-            次世代コミュニティプラットフォーム
+            すべてのSNSの上に、AIをつなぐ。
           </p>
+          <div className="mt-2 space-y-2 text-left">
+            {["💬 統合メッセンジャー", "🦉 AI秘書 ねね", "👥 コミュニティ", "📅 スケジュール管理"].map((f) => (
+              <div key={f} className="flex items-center gap-2 text-xs text-white/60">
+                <span className="h-1 w-1 rounded-full bg-love-gold" />
+                {f}
+              </div>
+            ))}
+          </div>
           <div className="mt-4 flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs text-love-gold">
             🦉 AI秘書「ねね」がいつもサポートします
           </div>
@@ -37,7 +48,7 @@ export default function LoginPage() {
         <div className="flex flex-col justify-center px-8 py-12 sm:px-12">
           <h2 className="text-2xl font-bold text-love-navy">ログイン</h2>
           <p className="mt-2 text-sm text-love-navy/50">
-            アカウント情報を入力してLOVEへようこそ
+            プロトタイプデモ — 何でも入力してログインできます
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-4">
@@ -93,6 +104,11 @@ export default function LoginPage() {
               新規登録
             </a>
           </p>
+          <div className="mt-4 rounded-xl border border-love-gold/20 bg-love-gold/5 p-3 text-center">
+            <p className="text-xs text-love-navy/40">
+              🦉 これはプロトタイプです。メールアドレス・パスワードは何でもOKです。
+            </p>
+          </div>
         </div>
       </div>
     </main>
