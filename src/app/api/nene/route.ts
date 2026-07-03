@@ -4,6 +4,8 @@ import { getAiProvider, mergeMessages, type AiChatMessage } from "@/lib/server/a
 type IncomingMessage = {
   role: "user" | "nene";
   text: string;
+  imageBase64?: string;
+  imageMediaType?: string;
 };
 
 function buildSystemPrompt(userName?: string) {
@@ -42,7 +44,18 @@ function toAiMessages(messages: IncomingMessage[]): AiChatMessage[] {
   const startIndex = messages.findIndex((m) => m.role === "user");
   const trimmed = startIndex === -1 ? [] : messages.slice(startIndex);
   return mergeMessages(
-    trimmed.map((m) => ({ role: m.role === "nene" ? "assistant" : "user", content: m.text }))
+    trimmed.map((m) => {
+      if (m.role === "user" && m.imageBase64 && m.imageMediaType) {
+        return {
+          role: "user" as const,
+          content: [
+            { type: "image" as const, source: { type: "base64" as const, media_type: m.imageMediaType, data: m.imageBase64 } },
+            { type: "text" as const, text: m.text || "この画像を分析して、SNS投稿用のキャプションとハッシュタグを作って！" },
+          ],
+        };
+      }
+      return { role: m.role === "nene" ? "assistant" as const : "user" as const, content: m.text };
+    })
   );
 }
 

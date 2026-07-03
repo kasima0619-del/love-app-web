@@ -24,6 +24,7 @@ export type NeneChatMessage = {
   id: string;
   role: "nene" | "user";
   text: string;
+  imagePreview?: string;
 };
 
 export const NENE_GREETING =
@@ -59,9 +60,18 @@ export function useNeneChat() {
   const [isTyping, setIsTyping] = useState(false);
   const [pendingSchedule, setPendingSchedule] = useState<ScheduleDemoEvent | null>(null);
   const [pendingCommunityShare, setPendingCommunityShare] = useState<string | null>(null);
+  const [attachment, setAttachment] = useState<File | null>(null);
+  const [attachmentPreview, setAttachmentPreview] = useState<string | null>(null);
 
-  function appendMessage(role: NeneChatMessage["role"], text: string) {
-    setMessages((prev) => [...prev, { id: nextId(), role, text }]);
+  function handleAttachment(file: File | null) {
+    setAttachment(file);
+    if (!file) { setAttachmentPreview(null); return; }
+    const url = URL.createObjectURL(file);
+    setAttachmentPreview(url);
+  }
+
+  function appendMessage(role: NeneChatMessage["role"], text: string, imagePreview?: string) {
+    setMessages((prev) => [...prev, { id: nextId(), role, text, imagePreview }]);
   }
 
   async function grantAndAnnounce(actionId: "schedule-create" | "instagram-post") {
@@ -103,11 +113,41 @@ export function useNeneChat() {
 
   function send(text: string) {
     const trimmed = text.trim();
-    if (!trimmed) return;
+    if (!trimmed && !attachment) return;
 
-    appendMessage("user", trimmed);
+    const preview = attachmentPreview ?? undefined;
+    appendMessage("user", trimmed || "📎 画像を送りました", preview);
     setInput("");
     setIsTyping(true);
+
+    // 画像添付あり → Claude Vision で分析
+    if (attachment) {
+      const file = attachment;
+      const mediaType = file.type || "image/jpeg";
+      setAttachment(null);
+      setAttachmentPreview(null);
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = (reader.result as string).split(",")[1];
+        const currentMessages = messages;
+        const allMessages = [
+          ...currentMessages,
+          { role: "user" as const, text: trimmed || "この画像を分析して、SNS投稿用のキャプションとハッシュタグを作って！", imageBase64: base64, imageMediaType: mediaType },
+        ];
+        fetch("/api/nene", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: allMessages }),
+        })
+          .then((r) => r.json() as Promise<{ text?: string }>)
+          .then(({ text: reply }) => { if (reply) appendMessage("nene", reply); })
+          .catch(() => appendMessage("nene", "画像の読み込みに失敗したよ🦉 もう一度試してみて。"))
+          .finally(() => setIsTyping(false));
+      };
+      reader.readAsDataURL(file);
+      return;
+    }
 
     if (isScheduleCreateRequest(trimmed)) {
       const demo = buildScheduleDemoEvent(trimmed);
@@ -180,5 +220,8 @@ export function useNeneChat() {
     pendingCommunityShare,
     approveCommunityShare,
     cancelCommunityShare,
+    attachment,
+    attachmentPreview,
+    handleAttachment,
   };
 }

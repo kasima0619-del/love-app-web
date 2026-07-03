@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import { NENE_QUICK_PROMPTS, useNeneChat } from "@/lib/hooks/use-nene-chat";
 
 // ホーム画面の主役となる、ねねとの会話入力欄（ChatGPT/Claudeに近い「まず話しかける」UI）。
@@ -19,9 +20,13 @@ export default function NeneHomeChat() {
     pendingCommunityShare,
     approveCommunityShare,
     cancelCommunityShare,
+    attachment,
+    attachmentPreview,
+    handleAttachment,
   } = useNeneChat();
 
   const bottomRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const hasConversation = messages.length > 1 || isTyping;
 
   useEffect(() => {
@@ -58,13 +63,24 @@ export default function NeneHomeChat() {
                   </span>
                 )}
                 <div
-                  className={`max-w-[80%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                  className={`max-w-[80%] rounded-2xl text-sm leading-relaxed ${
                     m.role === "user"
                       ? "rounded-br-none bg-love-pink text-white"
                       : "rounded-bl-none bg-love-bg text-love-navy"
                   }`}
                 >
-                  {m.text}
+                  {m.imagePreview && (
+                    <Image
+                      src={m.imagePreview}
+                      alt="添付画像"
+                      width={240}
+                      height={160}
+                      className="w-full max-w-[240px] rounded-xl rounded-b-none object-cover"
+                    />
+                  )}
+                  {m.text && (
+                    <p className="whitespace-pre-wrap px-4 py-2.5">{m.text}</p>
+                  )}
                 </div>
               </div>
             ))}
@@ -139,6 +155,19 @@ export default function NeneHomeChat() {
       {/* 会話入力欄（画面下部に固定。どこを見ていてもホームからすぐねねに話しかけられる） */}
       <div className="fixed inset-x-4 bottom-20 z-30 lg:inset-x-0 lg:bottom-6 lg:left-64 lg:px-8">
         <div className="mx-auto max-w-2xl rounded-3xl bg-love-bg/90 p-2 shadow-xl backdrop-blur-sm sm:p-3">
+
+          {/* 添付プレビュー */}
+          {attachmentPreview && (
+            <div className="mb-2 flex items-center gap-2 rounded-2xl border border-love-pink/20 bg-white p-2">
+              <Image src={attachmentPreview} alt="添付" width={56} height={56} className="h-14 w-14 rounded-xl object-cover flex-none" />
+              <div className="flex-1 min-w-0">
+                <p className="truncate text-xs font-semibold text-love-navy">{attachment?.name}</p>
+                <p className="text-[11px] text-love-navy/40">画像を送信するとねねが分析するよ📸</p>
+              </div>
+              <button type="button" onClick={() => handleAttachment(null)} className="flex-none rounded-full bg-love-bg px-2 py-1 text-xs text-love-navy/50 hover:text-love-pink">✕</button>
+            </div>
+          )}
+
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -150,8 +179,24 @@ export default function NeneHomeChat() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="ねねに話しかけてみる（例：明日の予定作って）"
+              placeholder={attachment ? "コメントを追加（省略OK）" : "ねねに話しかけてみる（例：明日の予定作って）"}
               className="flex-1 bg-transparent text-sm text-love-navy outline-none placeholder:text-love-navy/30"
+            />
+            {/* 添付ボタン */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className={`flex-none rounded-full p-2 text-base transition-colors ${attachment ? "bg-love-pink text-white" : "text-love-navy/40 hover:text-love-pink"}`}
+              title="画像・動画を添付"
+            >
+              📎
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,video/*"
+              className="hidden"
+              onChange={(e) => handleAttachment(e.target.files?.[0] ?? null)}
             />
             <button
               type="submit"
