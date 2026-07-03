@@ -141,12 +141,31 @@ export function useNeneChat() {
       return;
     }
 
-    setTimeout(() => {
-      const reply = FALLBACK_REPLIES[fallbackIndex % FALLBACK_REPLIES.length];
-      fallbackIndex += 1;
-      appendMessage("nene", reply);
-      setIsTyping(false);
-    }, 700);
+    // 上記いずれにも該当しない場合はClaudeに投げて本物のAI応答を返す
+    const currentMessages = messages;
+    const allMessages = [...currentMessages, { role: "user" as const, text: trimmed }];
+
+    fetch("/api/nene", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: allMessages }),
+    })
+      .then((res) => res.json() as Promise<{ text?: string; error?: string }>)
+      .then(({ text: reply, error }) => {
+        if (reply) {
+          appendMessage("nene", reply);
+        } else {
+          const fallback = FALLBACK_REPLIES[fallbackIndex % FALLBACK_REPLIES.length];
+          fallbackIndex += 1;
+          appendMessage("nene", error ? fallback : fallback);
+        }
+      })
+      .catch(() => {
+        appendMessage("nene", "ごめんなさい🦉 少し調子が悪いみたい。もう一度話しかけてみてください。");
+      })
+      .finally(() => {
+        setIsTyping(false);
+      });
   }
 
   return {
