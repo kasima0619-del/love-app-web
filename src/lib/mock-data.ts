@@ -184,6 +184,8 @@ export type PlatformUser = {
   handle: string;
   avatarInitial: string;
   bio: string;
+  platform?: "line";
+  platformUserId?: string;
 };
 
 export const platformUsers: PlatformUser[] = [
@@ -202,6 +204,7 @@ export type Conversation = {
   lastMessage: string;
   lastMessageAt: string;
   unread: number;
+  platform?: "line";
 };
 
 export const conversations: Conversation[] = [

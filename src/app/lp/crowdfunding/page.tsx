@@ -159,19 +159,22 @@ const roadmapStatusStyles: Record<string, string> = {
   upcoming: "bg-black/5 text-love-navy/50",
 };
 
-const supportPlans: { price: string; name: string; highlight?: boolean; rewards: string[] }[] = [
+const supportPlans: { usd: string; jpy: string; name: string; highlight?: boolean; rewards: string[] }[] = [
   {
-    price: "3,000円",
+    usd: "$20",
+    jpy: "約¥3,000",
     name: "応援プラン",
     rewards: ["お礼メッセージ（メール）", "活動報告レポートの共有"],
   },
   {
-    price: "10,000円",
+    usd: "$67",
+    jpy: "約¥10,000",
     name: "サポータープラン",
     rewards: ["お礼メッセージ", "活動報告レポートの共有", "LOVEオリジナルサンクスカード（データ版）"],
   },
   {
-    price: "30,000円",
+    usd: "$200",
+    jpy: "約¥30,000",
     name: "ファウンダープラン",
     highlight: true,
     rewards: [
@@ -181,14 +184,41 @@ const supportPlans: { price: string; name: string; highlight?: boolean; rewards:
     ],
   },
   {
-    price: "50,000円",
+    usd: "$333",
+    jpy: "約¥50,000",
     name: "パートナープラン",
     rewards: ["上記すべての特典", "オンライン活動報告会への招待", "公式サイトへの支援者名・ロゴ掲載（任意）"],
   },
   {
-    price: "100,000円",
+    usd: "$667",
+    jpy: "約¥100,000",
     name: "プレミアムパートナープラン",
     rewards: ["上記すべての特典", "運営者とのオンライン1on1ミーティング", "今後の機能要望ヒアリングの優先案内"],
+  },
+];
+
+const stretchGoals: { amount: string; jpy: string; label: string; title: string; body: string; isBase?: boolean }[] = [
+  {
+    amount: "$6,700",
+    jpy: "¥1,000,000",
+    label: "目標額",
+    title: "AI秘書ねねのAPIコスト確保",
+    body: "ねねのAI APIコスト6ヶ月分と基本機能の安定稼働を実現します。",
+    isBase: true,
+  },
+  {
+    amount: "$13,400",
+    jpy: "¥2,000,000",
+    label: "ストレッチゴール ①",
+    title: "多言語対応（英語・中国語）",
+    body: "LOVEアプリのUI・ねねの会話を英語・中国語に対応し、海外ユーザーも使えるプラットフォームへ。",
+  },
+  {
+    amount: "$20,000",
+    jpy: "¥3,000,000",
+    label: "ストレッチゴール ②",
+    title: "iOS / Android 正式ストアリリース",
+    body: "App Store・Google Playからインストールできるネイティブアプリとして正式リリースします。",
   },
 ];
 
@@ -228,6 +258,11 @@ function SectionHeading({
 export default function CrowdfundingLpPage() {
   return (
     <div className="bg-love-bg">
+      {/* Kickstarter announcement banner */}
+      <div className="bg-love-pink-dark px-4 py-2.5 text-center text-xs font-bold text-white sm:text-sm">
+        🚀 Kickstarter プロジェクト 審査申請中 — 承認次第、正式ページをお知らせします
+      </div>
+
       <header className="sticky top-0 z-30 border-b border-white/10 bg-love-navy/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           <span className="text-lg font-bold text-white">LOVE</span>
@@ -289,7 +324,7 @@ export default function CrowdfundingLpPage() {
         <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-2">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-love-gold-soft">
-              クラウドファンディング挑戦中
+              🌍 Kickstarter 掲載準備中
             </span>
             <p className="mt-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
               つながる、創る、叶える。
@@ -603,6 +638,45 @@ export default function CrowdfundingLpPage() {
         </div>
       </section>
 
+      {/* 10.5 ストレッチゴール */}
+      <section id="stretch-goals" className="bg-love-navy px-4 py-16 text-white sm:px-6 sm:py-20 lg:px-8">
+        <div className="mx-auto max-w-4xl">
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-love-gold-soft">
+              🎯 ストレッチゴール
+            </span>
+            <h2 className="mt-3 text-2xl font-bold sm:text-3xl">目標額と、その先の挑戦</h2>
+            <p className="mt-3 text-sm leading-relaxed text-white/70 sm:text-base">
+              Kickstarterは米ドル建てで掲載します。達成額が増えるほど、LOVEアプリの可能性が広がります。
+            </p>
+          </div>
+          <div className="mt-10 space-y-4">
+            {stretchGoals.map((goal) => (
+              <div
+                key={goal.amount}
+                className={`flex items-start gap-5 rounded-2xl border p-5 sm:p-6 ${
+                  goal.isBase
+                    ? "border-love-gold-soft/40 bg-love-gold-soft/10"
+                    : "border-white/10 bg-white/5"
+                }`}
+              >
+                <div className="shrink-0 text-center">
+                  <p className="text-xl font-black tabular-nums text-love-gold-soft sm:text-2xl">{goal.amount}</p>
+                  <p className="text-xs text-white/50">{goal.jpy}</p>
+                </div>
+                <div>
+                  <p className={`text-[10px] font-bold sm:text-xs ${goal.isBase ? "text-love-gold-soft" : "text-white/50"}`}>
+                    {goal.label}
+                  </p>
+                  <h3 className="mt-0.5 text-sm font-bold text-white sm:text-base">{goal.title}</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-white/70 sm:text-sm">{goal.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 11. 支援プラン */}
       <section id="support" className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="mx-auto max-w-6xl">
@@ -610,12 +684,12 @@ export default function CrowdfundingLpPage() {
             index="11"
             eyebrow="支援プラン"
             title="ご支援プラン・リターン"
-            description="LOVEの開発と「応援が循環するプラットフォーム」の実現を、ぜひ一緒に支えてください。"
+            description="Kickstarterはドル建てです。下記はおよその目安（$1 = 約¥150）です。LOVEの開発を、ぜひ一緒に支えてください。"
           />
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {supportPlans.map((plan) => (
               <div
-                key={plan.price}
+                key={plan.usd}
                 className={`flex flex-col rounded-2xl border bg-white p-6 shadow-sm ${
                   plan.highlight ? "border-love-pink-dark ring-2 ring-love-pink-dark/30" : "border-black/5"
                 }`}
@@ -626,7 +700,8 @@ export default function CrowdfundingLpPage() {
                   </span>
                 ) : null}
                 <p className="text-sm font-semibold text-love-navy/60">{plan.name}</p>
-                <p className="mt-1 text-3xl font-bold text-love-navy">{plan.price}</p>
+                <p className="mt-1 text-3xl font-black tabular-nums text-love-navy">{plan.usd}</p>
+                <p className="text-sm font-medium text-love-navy/40">{plan.jpy}</p>
                 <ul className="mt-4 space-y-2 text-sm text-love-navy/80">
                   {plan.rewards.map((reward) => (
                     <li key={reward} className="flex gap-2">

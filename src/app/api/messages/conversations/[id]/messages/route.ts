@@ -2,7 +2,8 @@ import { randomUUID } from "crypto";
 import { promises as fs } from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
-import { sendMessage } from "@/lib/server/messages-store";
+import { sendMessage, getLineUserIdForConversation } from "@/lib/server/messages-store";
+import { pushLineMessage } from "@/lib/server/line";
 
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "messages");
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -46,5 +47,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!result) {
     return NextResponse.json({ error: "会話が見つかりません" }, { status: 404 });
   }
+
+  if (text) {
+    const lineUserId = await getLineUserIdForConversation(id);
+    if (lineUserId) {
+      await pushLineMessage(lineUserId, text);
+    }
+  }
+
   return NextResponse.json(result, { status: 201 });
 }

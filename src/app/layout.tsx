@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "LOVE",
   },
+  verification: {
+    google: "KflCkh_zvC7neQLXN02QpKZZkIIhVOjt4mJ15sqMF2E",
+  },
 };
 
 export const viewport: Viewport = {

@@ -121,7 +121,7 @@ export default function LpHomePage() {
               href="/lp/crowdfunding#support"
               className="rounded-full bg-love-pink-dark px-7 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-love-pink sm:text-base"
             >
-              クラファンで応援する
+              Kickstarterで応援する
             </Link>
           </div>
         </div>
@@ -228,7 +228,7 @@ export default function LpHomePage() {
               href="/lp/crowdfunding#support"
               className="rounded-full bg-white px-7 py-3 text-sm font-bold text-love-pink-dark shadow-lg transition hover:bg-love-pink-soft sm:text-base"
             >
-              クラファンで応援する
+              Kickstarterで応援する
             </Link>
             <Link
               href="/lp/crowdfunding"

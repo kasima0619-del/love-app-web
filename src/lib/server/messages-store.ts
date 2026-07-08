@@ -118,6 +118,77 @@ export function sendMessage(conversationId: string, input: { text: string; image
   });
 }
 
+/** LINEから届いた実メッセージを、対応する会話に取り込む（存在しなければユーザー・会話を新規作成） */
+export function receiveExternalMessage(input: {
+  platform: "line";
+  platformUserId: string;
+  displayName: string;
+  text: string;
+}) {
+  return enqueue(async () => {
+    const data = await readData();
+    const userId = `${input.platform}-${input.platformUserId}`;
+
+    let user = data.users.find((u) => u.id === userId);
+    if (!user) {
+      user = {
+        id: userId,
+        name: input.displayName || "LINEユーザー",
+        handle: `@${input.platform}`,
+        avatarInitial: (input.displayName || "L").slice(0, 1),
+        bio: "LINEから連携中のトーク",
+        platform: input.platform,
+        platformUserId: input.platformUserId,
+      };
+      data.users = [...data.users, user];
+    }
+
+    let conversation = data.conversations.find((c) => c.type === "dm" && c.userId === userId);
+    if (!conversation) {
+      data.conversationIdCounter += 1;
+      conversation = {
+        id: `cv-${data.conversationIdCounter}`,
+        type: "dm",
+        userId,
+        name: user.name,
+        avatarInitial: user.avatarInitial,
+        lastMessage: "",
+        lastMessageAt: new Date().toISOString(),
+        unread: 0,
+        platform: input.platform,
+      };
+      data.conversations = [conversation, ...data.conversations];
+      data.threads[conversation.id] = [];
+    }
+
+    data.messageIdCounter += 1;
+    const message: DirectMessage = {
+      id: `dm-${data.messageIdCounter}`,
+      sender: "other",
+      text: input.text,
+      createdAt: new Date().toISOString(),
+    };
+    data.threads[conversation.id] = [...(data.threads[conversation.id] ?? []), message];
+    data.conversations = data.conversations.map((c) =>
+      c.id === conversation!.id ? { ...c, lastMessage: input.text, lastMessageAt: message.createdAt, unread: c.unread + 1 } : c
+    );
+
+    await writeData(data);
+    return { conversation: data.conversations.find((c) => c.id === conversation!.id)!, message };
+  });
+}
+
+/** LINE連携の会話かどうかを調べ、連携済みならLINEのユーザーIDを返す */
+export function getLineUserIdForConversation(conversationId: string) {
+  return enqueue(async () => {
+    const data = await readData();
+    const conversation = data.conversations.find((c) => c.id === conversationId);
+    if (!conversation || conversation.platform !== "line" || !conversation.userId) return null;
+    const user = data.users.find((u) => u.id === conversation.userId);
+    return user?.platformUserId ?? null;
+  });
+}
+
 export function markConversationRead(conversationId: string) {
   return enqueue(async () => {
     const data = await readData();
