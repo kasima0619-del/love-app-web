@@ -2,8 +2,9 @@ import { randomUUID } from "crypto";
 import { promises as fs } from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
-import { sendMessage, getLineUserIdForConversation } from "@/lib/server/messages-store";
+import { sendMessage, getExternalRecipientForConversation } from "@/lib/server/messages-store";
 import { pushLineMessage } from "@/lib/server/line";
+import { pushTelegramMessage } from "@/lib/server/telegram";
 
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "messages");
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -49,9 +50,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }
 
   if (text) {
-    const lineUserId = await getLineUserIdForConversation(id);
-    if (lineUserId) {
-      await pushLineMessage(lineUserId, text);
+    const recipient = await getExternalRecipientForConversation(id);
+    if (recipient?.platform === "line") {
+      await pushLineMessage(recipient.platformUserId, text);
+    } else if (recipient?.platform === "telegram") {
+      await pushTelegramMessage(recipient.platformUserId, text);
     }
   }
 

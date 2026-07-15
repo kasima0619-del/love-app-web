@@ -184,7 +184,7 @@ export type PlatformUser = {
   handle: string;
   avatarInitial: string;
   bio: string;
-  platform?: "line";
+  platform?: "line" | "telegram";
   platformUserId?: string;
 };
 
@@ -204,7 +204,7 @@ export type Conversation = {
   lastMessage: string;
   lastMessageAt: string;
   unread: number;
-  platform?: "line";
+  platform?: "line" | "telegram";
 };
 
 export const conversations: Conversation[] = [

@@ -118,9 +118,9 @@ export function sendMessage(conversationId: string, input: { text: string; image
   });
 }
 
-/** LINEから届いた実メッセージを、対応する会話に取り込む（存在しなければユーザー・会話を新規作成） */
+/** 外部メッセンジャーから届いた実メッセージを、対応する会話に取り込む（存在しなければユーザー・会話を新規作成） */
 export function receiveExternalMessage(input: {
-  platform: "line";
+  platform: "line" | "telegram";
   platformUserId: string;
   displayName: string;
   text: string;
@@ -128,15 +128,16 @@ export function receiveExternalMessage(input: {
   return enqueue(async () => {
     const data = await readData();
     const userId = `${input.platform}-${input.platformUserId}`;
+    const platformLabel = input.platform === "line" ? "LINE" : "Telegram";
 
     let user = data.users.find((u) => u.id === userId);
     if (!user) {
       user = {
         id: userId,
-        name: input.displayName || "LINEユーザー",
+        name: input.displayName || `${platformLabel}ユーザー`,
         handle: `@${input.platform}`,
-        avatarInitial: (input.displayName || "L").slice(0, 1),
-        bio: "LINEから連携中のトーク",
+        avatarInitial: (input.displayName || platformLabel).slice(0, 1),
+        bio: `${platformLabel}から連携中のトーク`,
         platform: input.platform,
         platformUserId: input.platformUserId,
       };
@@ -178,14 +179,15 @@ export function receiveExternalMessage(input: {
   });
 }
 
-/** LINE連携の会話かどうかを調べ、連携済みならLINEのユーザーIDを返す */
-export function getLineUserIdForConversation(conversationId: string) {
+/** 外部連携の会話かどうかを調べ、連携済みなら送信先プラットフォームとユーザーIDを返す */
+export function getExternalRecipientForConversation(conversationId: string) {
   return enqueue(async () => {
     const data = await readData();
     const conversation = data.conversations.find((c) => c.id === conversationId);
-    if (!conversation || conversation.platform !== "line" || !conversation.userId) return null;
+    if (!conversation || !conversation.platform || !conversation.userId) return null;
     const user = data.users.find((u) => u.id === conversation.userId);
-    return user?.platformUserId ?? null;
+    if (!user?.platformUserId) return null;
+    return { platform: conversation.platform, platformUserId: user.platformUserId };
   });
 }
 
