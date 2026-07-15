@@ -1,4 +1,4 @@
-const CACHE_VERSION = "love-pwa-v2";
+const CACHE_VERSION = "love-pwa-v3";
 const OFFLINE_URL = "/offline";
 
 const PRECACHE_URLS = [OFFLINE_URL, "/manifest.webmanifest", "/icons/icon-192", "/icons/icon-512"];
@@ -40,6 +40,12 @@ self.addEventListener("fetch", (event) => {
         })
         .catch(() => caches.match(request).then((cached) => cached || caches.match(OFFLINE_URL)))
     );
+    return;
+  }
+
+  // APIリクエストはキャッシュせず、常にネットワークから最新データを取得する
+  if (url.pathname.startsWith("/api/")) {
+    event.respondWith(fetch(request));
     return;
   }
 
