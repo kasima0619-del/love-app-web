@@ -1,5 +1,4 @@
-import { promises as fs } from "fs";
-import path from "path";
+import { put, get } from "@vercel/blob";
 import {
   platformUsers as seedUsers,
   conversations as seedConversations,
@@ -9,8 +8,9 @@ import {
   type PlatformUser,
 } from "@/lib/mock-data";
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const DATA_FILE = path.join(DATA_DIR, "messages.json");
+// Next.jsのサーバーレス関数はファイルシステムが読み取り専用のため、
+// ローカルファイルではなくVercel Blobにメッセージデータを永続化する
+const BLOB_PATHNAME = "messages-data.json";
 
 type MessagesData = {
   users: PlatformUser[];
@@ -32,8 +32,10 @@ function initialData(): MessagesData {
 
 async function readData(): Promise<MessagesData> {
   try {
-    const raw = await fs.readFile(DATA_FILE, "utf-8");
-    return JSON.parse(raw) as MessagesData;
+    const result = await get(BLOB_PATHNAME, { access: "private", useCache: false });
+    if (!result) throw new Error("blob not found");
+    const text = await new Response(result.stream).text();
+    return JSON.parse(text) as MessagesData;
   } catch {
     const data = initialData();
     await writeData(data);
@@ -42,8 +44,12 @@ async function readData(): Promise<MessagesData> {
 }
 
 async function writeData(data: MessagesData): Promise<void> {
-  await fs.mkdir(DATA_DIR, { recursive: true });
-  await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
+  await put(BLOB_PATHNAME, JSON.stringify(data, null, 2), {
+    access: "private",
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/json",
+  });
 }
 
 // 同時書き込みによるファイル競合を避けるための簡易キュー
